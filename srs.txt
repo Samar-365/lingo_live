@@ -1,0 +1,182 @@
+
+# **Software Requirements Specification (SRS)**
+
+## **Lingo-Live: Real-Time Screen Translation System**
+
+---
+
+## **1. Introduction**
+
+### **1.1 Purpose**
+
+The purpose of this document is to describe the software requirements for **Lingo-Live**, a desktop-based real-time screen translation system. The system uses Optical Character Recognition (OCR) to extract text from screen content and translates it using a language translation API. This document serves as a reference for developers, instructors, and evaluators.
+
+---
+
+### **1.2 Scope**
+
+Lingo-Live enables users to translate text displayed on their screens that cannot be copied directly, such as text in images, videos, PDFs, or legacy applications. The system captures a selected screen region, performs OCR, translates the extracted text, and displays the result as a floating overlay using a modern graphical interface built with **CustomTkinter**.
+
+---
+
+### **1.3 Definitions, Acronyms, and Abbreviations**
+
+| Term | Description                         |
+| ---- | ----------------------------------- |
+| OCR  | Optical Character Recognition       |
+| UI   | User Interface                      |
+| API  | Application Programming Interface   |
+| SRS  | Software Requirements Specification |
+
+---
+
+## **2. Overall Description**
+
+### **2.1 Product Perspective**
+
+Lingo-Live is a standalone desktop application developed in Python. It operates as a background utility that interacts with the operating system to capture screen regions and track mouse position. The system integrates OCR and a translation API, while the user interface is implemented using **CustomTkinter**, an enhanced version of Tkinter that provides a modern appearance.
+
+---
+
+### **2.2 Product Functions**
+
+* Capture a region of the screen near the mouse cursor
+* Extract text from captured images using OCR
+* Translate extracted text into a user-selected language
+* Display translated text in a floating overlay window
+* Provide user control via keyboard shortcuts and UI options
+
+---
+
+### **2.3 User Classes and Characteristics**
+
+* **General Users**: Users requiring instant translation of on-screen text
+* **Students**: Users accessing foreign-language learning resources
+* **Professionals**: Users working with multilingual software
+
+No prior technical knowledge is required to use the system.
+
+---
+
+### **2.4 Operating Environment**
+
+* Operating System: Windows / macOS / Linux
+* Programming Language: Python
+* OCR Engine: Tesseract OCR
+* UI Framework: **CustomTkinter**
+* Screen Capture: MSS
+* Internet Connection: Required for translation API
+
+---
+
+### **2.5 Design and Implementation Constraints**
+
+* OCR accuracy depends on text clarity and image resolution
+* Internet access is required for real-time translation
+* Screen capture size is limited to ensure performance
+* System permissions are required for screen access
+
+---
+
+## **3. System Requirements**
+
+### **3.1 Functional Requirements**
+
+**FR1:** The system shall allow users to initiate translation using a global keyboard shortcut.
+
+**FR2:** The system shall capture a predefined screen region around the mouse pointer.
+
+**FR3:** The system shall extract text from the captured image using an OCR engine.
+
+**FR4:** The system shall translate the extracted text using a translation API.
+
+**FR5:** The system shall display the translated text in a floating overlay window built using CustomTkinter.
+
+**FR6:** The system shall allow users to select the target language through the UI.
+
+**FR7:** The system shall automatically hide the translation overlay after a fixed duration.
+
+---
+
+### **3.2 Non-Functional Requirements**
+
+**NFR1 (Performance):**
+The system shall display translated text within 2 seconds of activation.
+
+**NFR2 (Usability):**
+The system shall provide a clean, modern, and intuitive interface using CustomTkinter.
+
+**NFR3 (Reliability):**
+The system shall handle OCR or network failures gracefully.
+
+**NFR4 (Portability):**
+The system shall be portable across major desktop operating systems.
+
+**NFR5 (Security):**
+The system shall not permanently store captured screen data.
+
+---
+
+## **4. External Interface Requirements**
+
+### **4.1 User Interface**
+
+* Floating borderless overlay window (CustomTkinter)
+* Language selection dropdown
+* Minimal settings panel
+* Keyboard shortcut support
+
+---
+
+### **4.2 Hardware Interfaces**
+
+* Mouse and keyboard
+* Display monitor
+
+---
+
+### **4.3 Software Interfaces**
+
+* Tesseract OCR engine
+* Translation API (Lingo.dev)
+* Operating system screen capture service
+
+---
+
+## **5. System Architecture Overview**
+
+The system is divided into the following modules:
+
+1. Mouse Tracking Module
+2. Screen Capture Module
+3. OCR Processing Module
+4. Translation Module
+5. CustomTkinter-based Overlay UI Module
+
+---
+
+## **6. Assumptions and Dependencies**
+
+* Users have a stable internet connection
+* OCR engine is properly installed and configured
+* Captured screen content is legible
+
+---
+
+## **7. Future Enhancements**
+
+* Automatic language detection
+* Hover-based translation without shortcuts
+* Translation history and bookmarks
+* Offline translation support
+* Improved OCR preprocessing
+
+---
+
+## **8. Conclusion**
+
+Lingo-Live provides an efficient solution for translating inaccessible on-screen text in real time. By combining OCR, translation APIs, and a modern CustomTkinter interface, the system delivers a fast, user-friendly desktop translation experience.
+
+---
+
+

@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import keyboard
 from services.ocr_service import OCRService
 from services.translation_service import TranslationService
+from services.gemini_service import GeminiService
 from ui.overlay import OverlayWindow
 from ui.screen_selector import ScreenSelector
 from config import DEFAULT_TARGET_LANGUAGE
@@ -24,8 +25,10 @@ class LingoLiveController:
     def __init__(self):
         self.ocr = OCRService()
         self.translator = TranslationService()
+        self.gemini = GeminiService()
         self.overlay = None
         self._selecting = False
+        self.last_translated_text = None
 
     def _on_lang_change(self, code):
         self.translator.set_target_language(code)
@@ -81,6 +84,8 @@ class LingoLiveController:
             
             print(f"[Trans] {result[:50]}...")
             
+            self.last_translated_text = result
+            
             if self.overlay:
                 self.overlay.schedule_action(self.overlay.show_text, text, result, pos)
                 
@@ -88,6 +93,32 @@ class LingoLiveController:
             print(f"[Error] {e}")
             if self.overlay:
                 self.overlay.schedule_action(self.overlay.show_error, str(e))
+
+    def _summarize_click(self):
+        """Handle summarize request."""
+        threading.Thread(target=self._summarize, daemon=True).start()
+
+    def _summarize(self):
+        """Perform summarization."""
+        if not self.last_translated_text:
+            if self.overlay:
+                 # Should probably show a toast or something, but for now just ignore or error
+                 pass
+            return
+
+        try:
+            if self.overlay:
+                self.overlay.schedule_action(self.overlay.show_loading, "Summarizing...")
+            
+            summary = self.gemini.summarize(self.last_translated_text)
+            
+            if self.overlay:
+                self.overlay.schedule_action(self.overlay.show_summary, summary)
+                
+        except Exception as e:
+            print(f"[Summarize Error] {e}")
+            if self.overlay:
+                self.overlay.schedule_action(self.overlay.show_error, f"Summarize failed: {e}")
 
     def _exit_app(self):
         """Exit the application."""
@@ -110,12 +141,18 @@ class LingoLiveController:
         else:
             print("  ⚠️ Tesseract not found")
         
+        if self.gemini.is_available():
+            print("  ✅ Gemini Ready")
+        else:
+            print("  ⚠️ Gemini not available")
+
         keyboard.add_hotkey(HOTKEY, self._start_new, suppress=False)
         keyboard.add_hotkey('escape', self._exit_app, suppress=False)
         
         self.overlay = OverlayWindow(
             on_language_change=self._on_lang_change,
-            on_new_translation=self._start_new
+            on_new_translation=self._start_new,
+            on_summarize_click=self._summarize_click
         )
         
         try:

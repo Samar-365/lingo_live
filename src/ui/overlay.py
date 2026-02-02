@@ -19,9 +19,10 @@ from config import (
 class OverlayWindow:
     """Optimized overlay window."""
 
-    def __init__(self, on_language_change=None, on_new_translation=None):
+    def __init__(self, on_language_change=None, on_new_translation=None, on_summarize_click=None):
         self.on_language_change = on_language_change
         self.on_new_translation = on_new_translation
+        self.on_summarize_click = on_summarize_click
         self.current_language = DEFAULT_TARGET_LANGUAGE
         self._root = None
         self._is_visible = False
@@ -76,6 +77,13 @@ class OverlayWindow:
                                       text_color="white", font=(OVERLAY_FONT_FAMILY, 12, "bold"),
                                       command=self._new_click)
         self.new_btn.pack(side="right", padx=(0, 10))
+
+        # Summarize button
+        self.summarize_btn = ctk.CTkButton(self.header, text="✨ Summarize", width=90, height=30,
+                                            fg_color="#9C27B0", hover_color="#7B1FA2",
+                                            text_color="white", font=(OVERLAY_FONT_FAMILY, 12, "bold"),
+                                            command=self._summarize_click)
+        self.summarize_btn.pack(side="right", padx=(0, 10))
         
         # Text area
         self.text = ctk.CTkTextbox(self.main_frame, fg_color="#2a2a4a",
@@ -125,6 +133,11 @@ class OverlayWindow:
             # Small delay to ensure window is hidden
             self._root.after(50, self.on_new_translation)
 
+    def _summarize_click(self):
+        """Handle summarize button click."""
+        if self.on_summarize_click:
+            self.on_summarize_click()
+
     def show_text(self, original: str, translated: str, pos: tuple = None):
         """Show translation result."""
         if not self._root:
@@ -149,13 +162,39 @@ class OverlayWindow:
         self._is_visible = True
         self.status.configure(text="Drag header to move")
 
-    def show_loading(self):
+    def show_summary(self, summary: str):
+        """Show summary result."""
+        if not self._root:
+            return
+        
+        self.text.configure(state="normal")
+        # Append summary instead of replacing everything? Or replace?
+        # Let's append if there is space, or just prepend/insert at end.
+        # Actually, showing it clearly is better.
+        
+        current_text = self.text.get("1.0", "end").strip()
+        new_content = f"{current_text}\n\n✨ Summary:\n{summary}"
+        
+        self.text.delete("1.0", "end")
+        self.text.insert("1.0", new_content)
+        self.text.configure(state="disabled")
+        self.status.configure(text="Summary generated")
+
+    def show_loading(self, message="Processing..."):
         """Show loading."""
         if not self._root:
             return
         self.text.configure(state="normal")
+        # If we are just summarizing, maybe we don't want to clear everything?
+        # But for now let's keep it simple.
+        if message == "Summarizing...":
+             # Maybe show a toast or change status instead of clearing text?
+             # For now, let's append a loading indicator if possible, or just update status.
+             self.status.configure(text="✨ Summarizing...")
+             return
+
         self.text.delete("1.0", "end")
-        self.text.insert("1.0", "⏳ Processing...")
+        self.text.insert("1.0", f"⏳ {message}")
         self.text.configure(state="disabled")
         self.status.configure(text="Please wait...")
         self._root.deiconify()

@@ -58,9 +58,11 @@ class LingoLiveApp:
     def __init__(self):
         from services.ocr_service import OCRService
         from services.translation_service import TranslationService
+        from services.gemini_service import GeminiService
         
         self.ocr = OCRService()
         self.translator = TranslationService()
+        self.gemini = GeminiService()
         self.current_language = DEFAULT_TARGET_LANGUAGE
         
         self.running = True
@@ -132,6 +134,13 @@ class LingoLiveApp:
                                       fg_color=OVERLAY_ACCENT_COLOR,
                                       command=self._new_selection)
         self.new_btn.pack(side="right", padx=(0, 5))
+
+        # Summarize button
+        self.summarize_btn = ctk.CTkButton(self.header, text="✨", width=35, height=30,
+                                            fg_color="transparent", hover_color="#9C27B0",
+                                            border_width=1, border_color="#9C27B0",
+                                            command=self._summarize)
+        self.summarize_btn.pack(side="right", padx=(0, 5))
         
         # Read Aloud button (optional TTS)
         self.read_btn = ctk.CTkButton(self.header, text="🔊", width=35, height=30,
@@ -401,10 +410,12 @@ class LingoLiveApp:
         self.last_translated_text = translated or ""
         print(f"[TTS Storage] Stored for TTS: '{self.last_translated_text}'")
         
-        if original and original != translated:
-            out = f"📝 Original:\n{original}\n\n🌐 Translation:\n{translated}"
+        # Always show both if we have original text, even if they are the same
+        if original:
+            out = f"📝 Original:\n{original}\n\n🌐 Translation:\n{translated or '...'}"
         else:
             out = translated or "No text"
+            
         self._set_text(out)
         self.status.configure(text="🔊 = Read Aloud | Ctrl+Alt+T = New")
     
@@ -420,6 +431,51 @@ class LingoLiveApp:
         except Exception as e:
             print(f"  ⚠️ TTS not available: {e}")
             self.tts_available = False
+            
+    def _summarize(self):
+        """Summarize the current translation."""
+        if not self.last_translated_text:
+            self._set_text("No text to summarize. Please translate something first.")
+            return
+            
+        if not self.gemini.is_available():
+            self._set_text("Gemini service is not available (check API key or connection).")
+            return
+            
+        print("[Summarize] Requesting summary...")
+        self.status.configure(text="✨ Summarizing...")
+        
+        # Disable button to prevent spam
+        self.summarize_btn.configure(state="disabled")
+        
+        def work():
+            try:
+                # Get full language name for better prompting
+                from config import SUPPORTED_LANGUAGES
+                lang_name = SUPPORTED_LANGUAGES.get(self.current_language, "English")
+                
+                summary = self.gemini.summarize(self.last_translated_text, target_language=lang_name)
+                self.root.after(0, lambda: self._show_summary(summary))
+            except Exception as e:
+                print(f"[Summarize Error] {e}")
+                self.root.after(0, lambda: self._set_text(f"Summarization failed: {e}"))
+            finally:
+                self.root.after(0, lambda: self.summarize_btn.configure(state="normal"))
+                
+        threading.Thread(target=work, daemon=True).start()
+        
+    def _show_summary(self, summary):
+        """Append summary to text box."""
+        current_text = self.textbox.get("1.0", "end").strip()
+        # Avoid duplicating if already summarized (simple check)
+        if "✨ Summary:" in current_text:
+             # Strip old summary if we want to replace, or just append new one?
+             # Let's just append for now, or maybe split?
+             pass
+
+        new_content = f"{current_text}\n\n✨ Summary:\n{summary}"
+        self._set_text(new_content)
+        self.status.configure(text="Summary generated | 🔊 = Read Aloud")
     
     def _read_aloud(self):
         """Read the translated text aloud using Microsoft Edge TTS."""

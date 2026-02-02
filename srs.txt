@@ -44,6 +44,7 @@ Lingo-Live is a standalone desktop application developed in Python. It operates 
 * Extract text from captured images using OCR
 * Translate extracted text into a user-selected language (Primary: Lingo.dev SDK)
 * Display translated text in a floating overlay window
+* Summarize translated text using Google Gemini API (`gemini-2.5-flash`)
 * Read aloud the translated text using high-quality Text-to-Speech (TTS)
 * Provide user control via keyboard shortcuts and UI options
 
@@ -99,6 +100,12 @@ No prior technical knowledge is required to use the system.
 
 **FR8:** The system shall provide a "Read Aloud" feature to speak the translated text using Microsoft Edge TTS.
 
+**FR9:** The system shall allow users to summarize the translated text via a button ("✨"), using the Google Gemini API.
+
+**FR10:** The system shall display the summary in the target language (same as translation).
+
+**FR11:** The system shall clearly display both original and translated text in separate sections, even if identical.
+
 ---
 
 ### **3.2 Non-Functional Requirements**
@@ -141,8 +148,8 @@ The system shall not permanently store captured screen data.
 ### **4.3 Software Interfaces**
 
 * Tesseract OCR engine
-* Tesseract OCR engine
 * Translation API: Lingo.dev SDK (Primary), Google Translate (Fallback)
+* Summarization API: Google Gemini API (Model: `gemini-2.5-flash`)
 * Text-to-Speech: Microsoft Edge TTS (via edge-tts library)
 * Operating system screen capture service
 

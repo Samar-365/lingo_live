@@ -42,7 +42,7 @@ Lingo-Live is a standalone desktop application developed in Python. It operates 
 
 * Capture a region of the screen near the mouse cursor
 * Extract text from captured images using OCR
-* Translate extracted text into a user-selected language (Primary: Lingo.dev SDK)
+* Translate extracted text into a user-selected language (Primary: Lingo.dev API, Fallback: Google Translate)
 * Display translated text in a floating overlay window
 * Summarize translated text using Google Gemini API (`gemini-2.5-flash`)
 * Read aloud the translated text using high-quality Text-to-Speech (TTS)

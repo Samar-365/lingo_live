@@ -106,6 +106,8 @@ No prior technical knowledge is required to use the system.
 
 **FR11:** The system shall clearly display both original and translated text in separate sections, even if identical.
 
+**FR12:** The system shall persist user preferences (hotkeys, opacity, language) across sessions.
+
 ---
 
 ### **3.2 Non-Functional Requirements**
@@ -148,7 +150,7 @@ The system shall not permanently store captured screen data.
 ### **4.3 Software Interfaces**
 
 * Tesseract OCR engine
-* Translation API: Lingo.dev SDK (Primary), Google Translate (Fallback)
+* Translation API: Lingo.dev API (Primary), Google Translate (Fallback)
 * Summarization API: Google Gemini API (Model: `gemini-2.5-flash`)
 * Text-to-Speech: Microsoft Edge TTS (via edge-tts library)
 * Operating system screen capture service
@@ -164,6 +166,7 @@ The system is divided into the following modules:
 3. OCR Processing Module
 4. Translation Module
 5. CustomTkinter-based Overlay UI Module
+6. Settings & Configuration Module
 
 ---
 

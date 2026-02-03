@@ -67,81 +67,36 @@
 
 ### 🧩 Block Diagram
 
-This high-level diagram shows how different modules interact within Lingo-Live.
+A high-level view of the system components.
 
 ```mermaid
-graph TD
-    User((👤 User))
-    
-    subgraph "Lingo-Live System"
-        UI[🖥️ CustomTkinter UI]
-        HK[⌨️ Hotkey Listener]
-        
-        subgraph "Core Services"
-            Cap[📷 Screen Capture (MSS)]
-            OCR[🔍 OCR Engine (Tesseract)]
-            Trans[🌐 Translation Service]
-            Sum[✨ Summarization (Gemini)]
-            TTS[🔊 TTS Service (Edge TTS)]
-        end
-        
-        Config[⚙️ Settings Manager]
-    end
-    
-    Ext[☁️ External APIs]
-    
-    User -->|Ctrl+Alt+T| HK
-    User -->|Interacts| UI
-    
-    HK -->|Trigger| Cap
-    UI -->|Request| Cap
-    
-    Cap -->|Image| OCR
-    OCR -->|Text| Trans
-    
-    Trans -->|Lingo.dev / Google| Ext
-    Trans -->|Translated Text| UI
-    
-    UI -->|Summarize Request| Sum
-    Sum -->|Text| UI
-    
-    UI -->|Read Aloud Request| TTS
-    TTS -->|Audio| User
-    
-    Config -->|Load/Save| UI
-    Config -.->|Configure| Trans
-    Config -.->|Configure| Sum
+graph LR
+    User((👤 User)) --> UI[🖥️ Interface]
+    UI --> Capture[📷 Screen Capture]
+    Capture --> OCR[🔍 Text Extraction]
+    OCR --> Trans[🌐 Translation API]
+    Trans --> UI
+    UI --> TTS[🔊 Text-to-Speech]
+    UI --> Gemini[✨ AI Summarizer]
 ```
 
 ---
 
-### 🔄 Execution Flowchart
+### 🔄 Workflow
 
-The following flowchart illustrates the step-by-step process from user activation to displaying the result.
+The simple process from selection to translation.
 
 ```mermaid
 flowchart TD
-    Start([🚀 Start App]) --> Init[Initialize Services & UI]
-    Init --> BgLoop{Wait for Input}
-    
-    BgLoop -->|Hotkey / 'New' Btn| SelectStart[Start Selection Mode]
-    
-    SelectStart --> UserSelect[👤 User Selects Area]
-    UserSelect --> Capture[📷 Capture Screenshot]
-    
-    Capture --> OCRProcess[🔍 Extract Text (OCR)]
-    
-    OCRProcess -->|Text Found?| CheckText{Text Found?}
-    CheckText -- No --> ErrMsg[Show 'No Text' Error] --> BgLoop
-    CheckText -- Yes --> Translate[🌐 Translate Text]
-    
-    Translate --> Display[🖥️ Show Result in Overlay]
-    
-    Display --> UserAction{User Action}
-    
-    UserAction -- Listen --> GenTTS[🔊 Generate Audio (TTS)] --> PlayTTS[Play Audio] --> UserAction
-    UserAction -- Summarize --> GenSum[✨ Call Gemini API] --> ShowSum[Append Summary] --> UserAction
-    UserAction -- Hide/Close --> Hide[✖ Hide Window] --> BgLoop
+    Start[🚀 Application Running] --> Hotkey[⌨️ User Inputs Hotkey]
+    Hotkey --> Select[🖱️ Select Screen Area]
+    Select --> Extract[🔍 Extract Text]
+    Extract --> Translate[🌐 Translate Text]
+    Translate --> Result[💡 Show Result]
+    Result --> Actions{Interact}
+    Actions --> |Read| Listen[🔊 Listen]
+    Actions --> |Summarize| Summary[✨ Summarize]
+    Actions --> |Hide| Background[🛡️ Background Mode]
 ```
 
 ---

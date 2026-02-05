@@ -7,7 +7,7 @@ import google.generativeai as genai
 
 # Hardcoded API key as requested
 # In production, use os.environ.get("GEMINI_API_KEY")
-API_KEY = "AIzaSyA55TexTd-omj93VJJAfHMn_nBIZJeCSCg"
+API_KEY = "AIzaSyBRTturf_RVN-V5RD9cAVcn5WCmpfqxn3M"
 
 class GeminiService:
     """Service to interact with Google Gemini models."""

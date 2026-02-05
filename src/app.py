@@ -59,10 +59,16 @@ class LingoLiveApp:
         from services.ocr_service import OCRService
         from services.translation_service import TranslationService
         from services.gemini_service import GeminiService
+        from services.ocr_service import OCRService
+        from services.translation_service import TranslationService
+        from services.gemini_service import GeminiService
+        from settings_manager import SettingsManager
+        import tkinter.font as tkfont
         
         self.ocr = OCRService()
         self.translator = TranslationService()
         self.gemini = GeminiService()
+        self.settings_manager = SettingsManager()
         self.current_language = DEFAULT_TARGET_LANGUAGE
         
         self.running = True
@@ -76,7 +82,9 @@ class LingoLiveApp:
         
         atexit.register(self._cleanup)
         
-        ctk.set_appearance_mode("dark")
+        # Theme
+        theme = self.settings_manager.get("theme", "Dark")
+        ctk.set_appearance_mode(theme)
         ctk.set_default_color_theme("blue")
         
         self._build_main_window()
@@ -101,8 +109,10 @@ class LingoLiveApp:
         self.header = ctk.CTkFrame(self.frame, fg_color="transparent")
         self.header.pack(fill="x", padx=10, pady=(10, 5))
         
+        font_family = self.settings_manager.get("font_family", OVERLAY_FONT_FAMILY)
+        
         self.title = ctk.CTkLabel(self.header, text="🌐 Lingo-Live",
-                             font=(OVERLAY_FONT_FAMILY, 14, "bold"),
+                             font=(font_family, 14, "bold"),
                              text_color=OVERLAY_ACCENT_COLOR)
         self.title.pack(side="left")
         
@@ -115,7 +125,7 @@ class LingoLiveApp:
         # Quit button (Explicit exit)
         ctk.CTkButton(self.header, text="Quit", width=50, height=30,
                       fg_color="transparent", hover_color="#ff4444", border_width=1, border_color="#ff4444",
-                      text_color="#ff4444",
+                      text_color="white",
                       command=self._exit_app).pack(side="right")
         
         # Hide button (X)
@@ -128,6 +138,12 @@ class LingoLiveApp:
                       fg_color="transparent", hover_color="#6ab0f9",
                       command=self._toggle_maximize)
         self.max_btn.pack(side="right", padx=(0, 2))
+
+        # Settings button
+        self.settings_btn = ctk.CTkButton(self.header, text="⚙️", width=30, height=30,
+                                           fg_color="transparent", hover_color="#6ab0f9",
+                                           command=self._open_settings)
+        self.settings_btn.pack(side="right", padx=(0, 5))
         
         # New button
         self.new_btn = ctk.CTkButton(self.header, text="📷 New", width=70, height=30,
@@ -142,6 +158,7 @@ class LingoLiveApp:
                                             command=self._summarize)
         self.summarize_btn.pack(side="right", padx=(0, 5))
         
+        
         # Read Aloud button (optional TTS)
         self.read_btn = ctk.CTkButton(self.header, text="🔊", width=35, height=30,
                                        fg_color="transparent", hover_color="#4a90d9",
@@ -150,9 +167,12 @@ class LingoLiveApp:
         self.read_btn.pack(side="right", padx=(0, 5))
         
         # Text
+        font_family = self.settings_manager.get("font_family", OVERLAY_FONT_FAMILY)
+        font_size = self.settings_manager.get("font_size", OVERLAY_FONT_SIZE)
+        
         self.textbox = ctk.CTkTextbox(self.frame, fg_color="#2a2a4a",
                                        text_color=OVERLAY_TEXT_COLOR,
-                                       font=(OVERLAY_FONT_FAMILY, OVERLAY_FONT_SIZE),
+                                       font=(font_family, font_size),
                                        wrap="word")
         self.textbox.pack(fill="both", expand=True, padx=10, pady=(5, 10))
         self._set_text("Press Ctrl+Alt+T or click '📷 New' to select text.\n\nClick ✕ to hide window (app keeps running).")
@@ -476,6 +496,183 @@ class LingoLiveApp:
         new_content = f"{current_text}\n\n✨ Summary:\n{summary}"
         self._set_text(new_content)
         self.status.configure(text="Summary generated | 🔊 = Read Aloud")
+
+    def _open_settings(self):
+        """Open settings window."""
+        if self.selection_window:
+            self.selection_window.destroy()
+            self.selection_window = None
+            
+        print("[Settings] Opening window...")
+        sw = ctk.CTkToplevel(self.root)
+        sw.title("Settings")
+        sw.geometry("420x550")
+        sw.attributes('-topmost', True)
+        sw.overrideredirect(True)
+        sw.configure(fg_color="#2b2b2b") # Dark background
+        
+        # --- Drag Logic ---
+        drag_data = {"x": 0, "y": 0}
+        
+        def start_drag(e):
+            drag_data["x"] = e.x
+            drag_data["y"] = e.y
+            
+        def do_drag(e):
+            x = sw.winfo_x() + e.x - drag_data["x"]
+            y = sw.winfo_y() + e.y - drag_data["y"]
+            sw.geometry(f"+{x}+{y}")
+            
+        # --- Custom Header ---
+        header = ctk.CTkFrame(sw, height=40, fg_color="#1f1f1f", corner_radius=0)
+        header.pack(fill="x", side="top")
+        
+        # Bind drag to header
+        header.bind("<Button-1>", start_drag)
+        header.bind("<B1-Motion>", do_drag)
+        
+        # Title
+        title_lbl = ctk.CTkLabel(header, text="⚙️ Settings", font=("Arial", 14, "bold"))
+        title_lbl.pack(side="left", padx=10, pady=5)
+        title_lbl.bind("<Button-1>", start_drag) # Drag from title too
+        title_lbl.bind("<B1-Motion>", do_drag)
+        
+        # Close Button
+        ctk.CTkButton(header, text="✕", width=30, height=30,
+                      fg_color="transparent", hover_color="#ff4444", text_color="white",
+                      command=sw.destroy).pack(side="right", padx=5)
+
+        # Content Frame
+        content = ctk.CTkFrame(sw, fg_color="transparent")
+        content.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # --- Theme ---
+        ctk.CTkLabel(content, text="App Theme", font=("Arial", 14, "bold")).pack(pady=(10, 5))
+        current_theme = self.settings_manager.get("theme", "Dark")
+        theme_var = ctk.StringVar(value=current_theme)
+        def switch_theme(choice):
+            ctk.set_appearance_mode(choice)
+            self.settings_manager.set("theme", choice)
+            
+        ctk.CTkOptionMenu(content, values=["Dark", "Light", "System"], variable=theme_var,
+                          command=switch_theme).pack(pady=5)
+
+        # --- Opacity ---
+        ctk.CTkLabel(content, text="Window Opacity", font=("Arial", 14, "bold")).pack(pady=(15, 5))
+        current_opacity = self.settings_manager.get("opacity", 1.0)
+        slider = ctk.CTkSlider(content, from_=0.2, to=1.0, number_of_steps=20)
+        slider.set(current_opacity)
+        slider.pack(pady=5)
+        def update_opacity(val):
+            self.root.attributes('-alpha', val)
+            self.settings_manager.set("opacity", val) # Save on drag? Maybe too much I/O. Save on close/save btn better.
+        slider.configure(command=update_opacity)
+        
+        # --- Font Family ---
+        ctk.CTkLabel(content, text="Font Family", font=("Arial", 14, "bold")).pack(pady=(15, 5))
+        current_font = self.settings_manager.get("font_family", "Segoe UI")
+        fonts = ["Segoe UI", "Arial", "Roboto", "Helvetica", "Courier New", "Times New Roman"]
+        font_var = ctk.StringVar(value=current_font)
+        
+        def update_font_family(choice):
+            self.settings_manager.set("font_family", choice)
+            self._update_app_fonts()
+            
+        ctk.CTkOptionMenu(content, values=fonts, variable=font_var, command=update_font_family).pack(pady=5)
+        
+        # --- Font Size ---
+        ctk.CTkLabel(content, text="Font Size", font=("Arial", 14, "bold")).pack(pady=(15, 5))
+        current_size = self.settings_manager.get("font_size", 14)
+        size_var = ctk.StringVar(value=str(current_size))
+        
+        def update_font_size(choice):
+            self.settings_manager.set("font_size", int(choice))
+            self._update_app_fonts()
+            
+        ctk.CTkOptionMenu(content, values=[str(x) for x in range(10, 25)], variable=size_var,
+                          command=update_font_size).pack(pady=5)
+
+        # --- Hotkey ---
+        ctk.CTkLabel(content, text="Activation Hotkey", font=("Arial", 14, "bold")).pack(pady=(15, 5))
+        current_hotkey = self.settings_manager.get("hotkey", HOTKEY)
+        self.hotkey_btn = ctk.CTkButton(content, text=current_hotkey, 
+                                        command=lambda: self._listen_for_hotkey(sw))
+        self.hotkey_btn.pack(pady=5)
+        ctk.CTkLabel(content, text="(Click to set new hotkey)", font=("Arial", 10), text_color="gray").pack()
+        
+        # Save Button
+        def save():
+            # Save all non-live values
+            self.settings_manager.set("opacity", slider.get())
+            # Font family/size, theme, hotkey are already saved/applied live
+            # Theme handled by callback
+            # Hotkey handled by listener
+            
+            sw.destroy()
+            print("[Settings] Saved.")
+            
+        ctk.CTkButton(content, text="Save & Close", fg_color="#4CAF50", command=save).pack(pady=20)
+        
+    def _listen_for_hotkey(self, parent):
+        self.hotkey_btn.configure(text="Press any key combination...", state="disabled")
+        parent.focus()
+        
+        def on_key(e):
+             # Simple capturing logic (modifier+key or just key)
+             recorded = keyboard.read_hotkey(suppress=False)
+             if recorded:
+                 self.hotkey_btn.configure(text=recorded, state="normal")
+                 self.settings_manager.set("hotkey", recorded)
+                 self._update_hotkey(recorded)
+                 
+        # Run in thread to not block UI
+        threading.Thread(target=on_key, daemon=True).start()
+
+    def _update_hotkey(self, new_hotkey):
+        """Update global hotkey binding."""
+        try:
+            keyboard.remove_hotkey(self._on_hotkey)
+        except:
+            pass
+        
+        try:
+            keyboard.add_hotkey(new_hotkey, self._on_hotkey, suppress=False)
+            print(f"[Settings] Hotkey updated to: {new_hotkey}")
+            self.status.configure(text=f"{new_hotkey} = New | ✕ = Hide | Quit = Exit")
+            
+            # Update global display in main app
+            print(f"  Hotkey changed: {new_hotkey}")
+        except Exception as e:
+            print(f"[Settings] Error binding hotkey: {e}")
+
+    def _update_app_fonts(self):
+        """Update fonts on all widgets immediately."""
+        family = self.settings_manager.get("font_family", OVERLAY_FONT_FAMILY)
+        size = self.settings_manager.get("font_size", OVERLAY_FONT_SIZE)
+        
+        print(f"[Settings] Updating fonts to: {family} {size}")
+        
+        try:
+            # Main text
+            self.textbox.configure(font=(family, size))
+            
+            # Title
+            self.title.configure(font=(family, 14, "bold"))
+            
+            # Status bar (keep small)
+            self.status.configure(font=(family, 10))
+            
+            # Buttons (standard size)
+            if hasattr(self, 'new_btn'): self.new_btn.configure(font=(family, 12))
+            if hasattr(self, 'settings_btn'): self.settings_btn.configure(font=(family, 12))
+            if hasattr(self, 'read_btn'): self.read_btn.configure(font=(family, 12))
+            if hasattr(self, 'summarize_btn'): self.summarize_btn.configure(font=(family, 12))
+            
+            # Re-update text content to force refresh if needed
+            # self._set_text(self.textbox.get("1.0", "end").strip())
+            
+        except Exception as e:
+            print(f"[Settings] Font update error: {e}")
     
     def _read_aloud(self):
         """Read the translated text aloud using Microsoft Edge TTS."""
@@ -571,7 +768,8 @@ class LingoLiveApp:
                     print(f"[Playback Error] {e}")
                 
                 print("[TTS] Finished speaking")
-                self.root.after(0, lambda: self.status.configure(text="🔊 = Read Aloud | Ctrl+Alt+T = New"))
+                hotkey = self.settings_manager.get("hotkey", HOTKEY)
+                self.root.after(0, lambda: self.status.configure(text=f"🔊 = Read Aloud | {hotkey} = New"))
                 
                 # Cleanup
                 try:
@@ -632,11 +830,18 @@ class LingoLiveApp:
         print("  ✕ to Hide | Quit to Exit")
         print("=" * 40)
         
+        
         if self.ocr.is_available():
             print("  ✅ OCR Ready")
             
-        keyboard.add_hotkey(HOTKEY, self._on_hotkey, suppress=False)
-        print("  ✅ Hotkey active")
+        # Load hotkey from settings
+        hotkey = self.settings_manager.get("hotkey", HOTKEY)
+        keyboard.add_hotkey(hotkey, self._on_hotkey, suppress=False)
+        print(f"  ✅ Hotkey active: {hotkey}")
+        
+        # Apply opacity from settings
+        opacity = self.settings_manager.get("opacity", OVERLAY_OPACITY)
+        self.root.attributes('-alpha', opacity)
         print("[Ready - App runs in background]")
         
         try:

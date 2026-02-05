@@ -2,7 +2,7 @@
 
 **Lingo-Live** is a powerful, real-time screen translation tool designed for seamless multilingual experiences on your desktop. Run it in the background, select any text on your screen (images, PDFs, videos), and get instant translations, summaries, and audio readouts—all without leaving your current window.
 
-![Lingo-Live Banner](https://via.placeholder.com/800x200.png?text=Lingo-Live:+Real-Time+Screen+Translation)
+![Lingo-Live Banner](assets/banner.png)
 
 ---
 

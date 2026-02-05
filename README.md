@@ -100,6 +100,42 @@ flowchart TD
 ```
 
 ---
+## 💻 Tech Stack
+
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Language** | 🐍 **Python** | Core logic and scripting. |
+| **GUI** | 🖥️ **CustomTkinter** | Modern, dark-mode friendly UI framework. |
+| **OCR** | 🔍 **Tesseract** | Optical Character Recognition engine. |
+| **Translation** | 🌐 **Lingo.dev** | Specialized translation API. |
+| **AI** | ✨ **Google Gemini** | LLM for intelligent text summarization. |
+| **TTS** | 🔊 **Edge TTS** | High-quality neural voice synthesis. |
+| **Audio** | 🎵 **Pygame** | Robust audio playback for TTS. |
+| **System** | ⌨️ **Keyboard** | Global hotkey hooks and input management. |
+
+---
+
+## 📂 Project Structure
+
+```bash
+lingo-live/
+├── assets/              # Images and resources
+├── src/
+│   ├── services/        # Core business logic
+│   │   ├── gemini_service.py      # AI Summarization
+│   │   ├── ocr_service.py         # Tesseract integration
+│   │   ├── translation_service.py # Lingo.dev API wrapper
+│   │   └── ...
+│   ├── app.py           # Main application logic & UI
+│   ├── config.py        # Global configuration
+│   └── settings_manager.py # Persistent settings handler
+├── main.py              # Application entry point
+├── requirements.txt     # Python dependencies
+├── run.bat              # Quick launcher script
+└── settings.json        # User configuration (generated)
+```
+
+---
 
 ## 📜 License
 

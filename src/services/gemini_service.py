@@ -3,11 +3,15 @@ Gemini Service for Lingo-Live
 Wraps the google-generativeai library for text summarization.
 """
 
+import os
 import google.generativeai as genai
+from dotenv import load_dotenv
 
-# Hardcoded API key as requested
-# In production, use os.environ.get("GEMINI_API_KEY")
-API_KEY = "AIzaSyBRTturf_RVN-V5RD9cAVcn5WCmpfqxn3M"
+# Load environment variables
+load_dotenv()
+
+# Get API key from environment variable
+API_KEY = os.getenv("GEMINI_API_KEY")
 
 class GeminiService:
     """Service to interact with Google Gemini models."""

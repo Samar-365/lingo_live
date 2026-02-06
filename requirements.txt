@@ -6,3 +6,4 @@ numpy
 mss
 keyboard
 google-generativeai
+python-dotenv

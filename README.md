@@ -6,19 +6,19 @@
 
 ---
 
-## ✨ Features
+##  Features
 
-- **📷 OCR & Translation**: Instantly capture any screen region and translate text using advanced OCR (Tesseract) and translation APIs (Lingo.dev optimized).
-- **🔊 Text-to-Speech (TTS)**: Listen to translations with high-quality, natural-sounding voices (via Microsoft Edge TTS).
-- **✨ AI Summarization**: Get concise summaries of long translations using **Google Gemini 1.5 Flash**.
-- **⚙️ Modern Settings UI**: Customize your experience with a beautiful, user-friendly settings panel built with CustomTkinter.
-- **🛡️ Persistent & Unintrusive**: Runs quietly in the background. Toggle visibility instantly or minimize to tray (conceptual).
-- **⌨️ Global Hotkeys**: Trigger translations from anywhere with `Ctrl+Alt+T` (customizable).
-- **🎨 Theming**: Auto-adapts to your system theme (Dark/Light).
+- ** OCR & Translation**: Instantly capture any screen region and translate text using advanced OCR (Tesseract) and translation APIs (Lingo.dev optimized).
+- ** Text-to-Speech (TTS)**: Listen to translations with high-quality, natural-sounding voices (via Microsoft Edge TTS).
+- ** AI Summarization**: Get concise summaries of long translations using **Google Gemini 1.5 Flash**.
+- ** Modern Settings UI**: Customize your experience with a beautiful, user-friendly settings panel built with CustomTkinter.
+- ** Persistent & Unintrusive**: Runs quietly in the background. Toggle visibility instantly or minimize to tray (conceptual).
+- ** Global Hotkeys**: Trigger translations from anywhere with `Ctrl+Alt+T` (customizable).
+- ** Theming**: Auto-adapts to your system theme (Dark/Light).
 
 ---
 
-## 🛠️ Installation
+##  Installation
 
 ### Prerequisites
 1. **Python 3.8+** installed.
@@ -47,7 +47,7 @@
 
 ---
 
-## 🚀 Usage
+##  Usage
 
 1. **Start Lingo-Live**: The app will launch and run in the background.
 2. **Select Text**:
@@ -55,67 +55,67 @@
    - The screen will dim. Click and drag to select the text you want to translate.
 3. **View Results**: The overlay window will appear with the captured text and its translation.
 4. **Interact**:
-   - 🔊 **Read Aloud**: Click the speaker icon to hear the translation.
-   - ✨ **Summarize**: Click the sparkle icon to get a summary.
-   - 📷 **New**: Click to capture a new area.
-   - ✖ **Hide**: Click 'X' or press `Esc` to hide the window (app keeps running).
-5. **Settings**: Click the ⚙️ icon to change hotkeys, languages, opacity, and API keys.
+   -  **Read Aloud**: Click the speaker icon to hear the translation.
+   -  **Summarize**: Click the sparkle icon to get a summary.
+   -  **New**: Click to capture a new area.
+   -  **Hide**: Click 'X' or press `Esc` to hide the window (app keeps running).
+5. **Settings**: Click the settings icon to change hotkeys, languages, opacity, and API keys.
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
-### 🧩 Block Diagram
+###  Block Diagram
 
 A high-level view of the system components.
 
 ```mermaid
 graph LR
-    User((👤 User)) --> UI[🖥️ Interface]
-    UI --> Capture[📷 Screen Capture]
-    Capture --> OCR[🔍 Text Extraction]
-    OCR --> Trans[🌐 Translation API]
+    User((User)) --> UI[Interface]
+    UI --> Capture[Screen Capture]
+    Capture --> OCR[Text Extraction]
+    OCR --> Trans[Translation API]
     Trans --> UI
-    UI --> TTS[🔊 Text-to-Speech]
-    UI --> Gemini[✨ AI Summarizer]
+    UI --> TTS[Text-to-Speech]
+    UI --> Gemini[AI Summarizer]
 ```
 
 ---
 
-### 🔄 Workflow
+###  Workflow
 
 The simple process from selection to translation.
 
 ```mermaid
 flowchart TD
-    Start[🚀 Application Running] --> Hotkey[⌨️ User Inputs Hotkey]
-    Hotkey --> Select[🖱️ Select Screen Area]
-    Select --> Extract[🔍 Extract Text]
-    Extract --> Translate[🌐 Translate Text]
-    Translate --> Result[💡 Show Result]
+    Start[Application Running] --> Hotkey[User Inputs Hotkey]
+    Hotkey --> Select[Select Screen Area]
+    Select --> Extract[Extract Text]
+    Extract --> Translate[Translate Text]
+    Translate --> Result[Show Result]
     Result --> Actions{Interact}
-    Actions --> |Read| Listen[🔊 Listen]
-    Actions --> |Summarize| Summary[✨ Summarize]
-    Actions --> |Hide| Background[🛡️ Background Mode]
+    Actions --> |Read| Listen[Listen]
+    Actions --> |Summarize| Summary[Summarize]
+    Actions --> |Hide| Background[Background Mode]
 ```
 
 ---
-## 💻 Tech Stack
+##  Tech Stack
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
-| **Language** | 🐍 **Python** | Core logic and scripting. |
-| **GUI** | 🖥️ **CustomTkinter** | Modern, dark-mode friendly UI framework. |
-| **OCR** | 🔍 **Tesseract** | Optical Character Recognition engine. |
-| **Translation** | 🌐 **Lingo.dev** | Specialized translation API. |
-| **AI** | ✨ **Google Gemini** | LLM for intelligent text summarization. |
-| **TTS** | 🔊 **Edge TTS** | High-quality neural voice synthesis. |
-| **Audio** | 🎵 **Pygame** | Robust audio playback for TTS. |
-| **System** | ⌨️ **Keyboard** | Global hotkey hooks and input management. |
+| **Language** | **Python** | Core logic and scripting. |
+| **GUI** | **CustomTkinter** | Modern, dark-mode friendly UI framework. |
+| **OCR** | **Tesseract** | Optical Character Recognition engine. |
+| **Translation** | **Lingo.dev** | Specialized translation API. |
+| **AI** | **Google Gemini** | LLM for intelligent text summarization. |
+| **TTS** | **Edge TTS** | High-quality neural voice synthesis. |
+| **Audio** | **Pygame** | Robust audio playback for TTS. |
+| **System** | **Keyboard** | Global hotkey hooks and input management. |
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```bash
 lingo-live/
@@ -137,6 +137,6 @@ lingo-live/
 
 ---
 
-## 📜 License
+##  License
 
 Distributed under the MIT License. See `LICENSE` for more information.

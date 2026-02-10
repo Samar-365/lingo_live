@@ -137,6 +137,10 @@ lingo-live/
 
 ---
 
+Demo video: https://youtu.be/YRHfRc4_d3s
+
+---
+
 ##  License
 
 Distributed under the MIT License. See `LICENSE` for more information.
